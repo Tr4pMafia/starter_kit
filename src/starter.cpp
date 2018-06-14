@@ -9,11 +9,6 @@ namespace mafia
 {
 namespace intel_x64
 {
-static bool handle_cpuid_mafia()
-{
-    bfdebug_info(0, "mafia inside");
-    return true;
-}
 class exit_handler_mafia : public bfvmm::intel_x64::exit_handler
 {
 public:

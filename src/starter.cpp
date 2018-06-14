@@ -4,9 +4,7 @@
 #include <bfdebug.h>
 #include <bfvmm/vcpu/vcpu_factory.h>
 #include <bfgsl.h>
-// -----------------------------------------------------------------------------
-// Handlers
-// -----------------------------------------------------------------------------
+
 namespace mafia
 {
 namespace intel_x64

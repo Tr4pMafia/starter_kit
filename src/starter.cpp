@@ -9,6 +9,20 @@ namespace mafia
 {
 namespace intel_x64
 {
+static bool
+handle_cpuid_mafia(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
+{
+    if (vmcs->save_state()->rax == 0xBF01) {
+        bfdebug_info(0, "[MAFIA] host os is" bfcolor_green " now " bfcolor_end "in a vm");
+        return false;
+    }
+
+    if (vmcs->save_state()->rax == 0xBF00) {
+        bfdebug_info(0, "[MAFIA] host os is" bfcolor_red " not " bfcolor_end "in a vm");
+        return false;
+    }
+    return false;
+}
 class exit_handler_mafia : public bfvmm::intel_x64::exit_handler
 {
 public:
@@ -16,6 +30,10 @@ public:
     : exit_handler(vmcs)
     {
         bfdebug_info(0, "mafia hype you");
+        add_handler(
+            exit_reason::basic_exit_reason::cpuid,
+            handler_delegate_t::create<mafia::intel_x64::handle_cpuid_mafia>()
+        );
     }
 };
 
@@ -37,7 +55,7 @@ private:
 
 namespace bfvmm
 {
-WEAK_SYM std::unique_ptr<bfvmm::vcpu>
+std::unique_ptr<bfvmm::vcpu>
 vcpu_factory::make_vcpu(vcpuid::type vcpuid, bfobject *obj)
 {
     bfignored(obj);

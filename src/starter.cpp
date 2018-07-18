@@ -29,21 +29,6 @@ namespace intel_x64
 {
 
 static bool
-handle_cpuid_mafia(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
-{
-    if (vmcs->save_state()->rax == 0xBF01) {
-        bfdebug_info(0, "[MAFIA] host os is" bfcolor_green " now " bfcolor_end "in a vm");
-        return false;
-    }
-
-    if (vmcs->save_state()->rax == 0xBF00) {
-        bfdebug_info(0, "[MAFIA] host os is" bfcolor_red " not " bfcolor_end "in a vm");
-        return false;
-    }
-    return false;
-}
-
-static bool
 handle_vmxoff(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
 {
     vmcs->promote();
@@ -65,11 +50,6 @@ public:
     {
         using namespace ::intel_x64::vmcs;
         bfdebug_info(0, "mafia hype you");
-
-        add_handler(
-            exit_reason::basic_exit_reason::cpuid,
-            handler_delegate_t::create<mafia::intel_x64::handle_cpuid_mafia>()
-        );
 
         add_handler(
             exit_reason::basic_exit_reason::vmxoff,

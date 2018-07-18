@@ -32,7 +32,7 @@ static bool
 handle_vmxoff(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
 {
     vmcs->promote();
-    return true;
+    return advance(vmcs);
 }
 
 static bool

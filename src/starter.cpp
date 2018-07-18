@@ -27,6 +27,7 @@ namespace mafia
 {
 namespace intel_x64
 {
+
 static bool
 handle_cpuid_mafia(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
 {
@@ -41,6 +42,21 @@ handle_cpuid_mafia(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
     }
     return false;
 }
+
+static bool
+handle_vmxoff(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
+{
+    vmcs->promote();
+    return true;
+}
+
+static bool
+handle_init_signal(gsl::not_null<bfvmm::intel_x64::vmcs *> vmcs)
+{
+    // [NOTE] do nothing here, but is it correct??
+    return advance(vmcs);
+}
+
 class exit_handler_mafia : public bfvmm::intel_x64::exit_handler
 {
 public:
@@ -49,9 +65,20 @@ public:
     {
         using namespace ::intel_x64::vmcs;
         bfdebug_info(0, "mafia hype you");
+
         add_handler(
             exit_reason::basic_exit_reason::cpuid,
             handler_delegate_t::create<mafia::intel_x64::handle_cpuid_mafia>()
+        );
+
+        add_handler(
+            exit_reason::basic_exit_reason::vmxoff,
+            handler_delegate_t::create<mafia::intel_x64::handle_vmxoff>()
+        );
+
+        add_handler(
+            exit_reason::basic_exit_reason::init_signal,
+            handler_delegate_t::create<mafia::intel_x64::handle_init_signal>()
         );
     }
 };

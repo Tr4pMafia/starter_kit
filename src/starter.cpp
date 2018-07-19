@@ -49,7 +49,7 @@ public:
     : vcpu(id)
     {
         exit_handler()->add_handler(
-            exit_reason::basic_exit_reason::cpuid,
+            ::intel_x64::vmcs::exit_reason::basic_exit_reason::cpuid,
             handler_delegate_t::create<mafia::intel_x64::handle_cpuid_mafia>()
         );
     }
